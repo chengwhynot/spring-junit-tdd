@@ -104,6 +104,25 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("POST /product - Duplicate Name")
+    void testCreateDuplicateNameFailed() throws Exception {
+        // Setup mocked service
+        Product postProduct = new Product("Product Name", 10);
+        Product mockProduct = new Product(1, "Product Name", 10, 1);
+        doReturn(mockProduct).when(service).save(any());
+
+        //doReturn(Optional.of(mockProduct)).when(service).findByName(postProduct.getName());
+
+        mockMvc.perform(post("/product")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(asJsonString(postProduct)))
+
+                // Validate the response code and content type
+                .andExpect(status().isConflict())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+    }
+
+    @Test
     @DisplayName("PUT /product/1 - Success")
     void testProductPutSuccess() throws Exception {
         // Setup mocked service
