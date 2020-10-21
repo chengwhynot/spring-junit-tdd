@@ -5,6 +5,8 @@ import com.globomantics.productservice.model.Product;
 import java.util.List;
 import java.util.Optional;
 
+import javax.naming.directory.InvalidAttributesException;
+
 public interface ProductService {
     /**
      * Returns the product with the specified id.
@@ -35,7 +37,7 @@ public interface ProductService {
      * @param product   The product to save to the database.
      * @return          The saved product.
      */
-    Product save(Product product);
+    Product save(Product product) throws InvalidAttributesException;
 
     /**
      * Deletes the product with the specified id.

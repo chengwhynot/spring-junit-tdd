@@ -1,8 +1,7 @@
 package com.globomantics.productservice.web;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -26,6 +25,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+
+import javax.naming.directory.InvalidAttributesException;
 import java.util.Optional;
 
 @ExtendWith(SpringExtension.class)
@@ -109,17 +110,14 @@ class ProductControllerTest {
         // Setup mocked service
         Product postProduct = new Product("Product Name", 10);
         Product mockProduct = new Product(1, "Product Name", 10, 1);
-        doReturn(mockProduct).when(service).save(any());
-
-        //doReturn(Optional.of(mockProduct)).when(service).findByName(postProduct.getName());
+        doThrow(InvalidAttributesException.class).when(service).save(any());
 
         mockMvc.perform(post("/product")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(asJsonString(postProduct)))
 
                 // Validate the response code and content type
-                .andExpect(status().isConflict())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+                .andExpect(status().isConflict());
     }
 
     @Test

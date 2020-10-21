@@ -4,6 +4,7 @@ import com.globomantics.productservice.model.Product;
 import com.globomantics.productservice.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
+import javax.naming.directory.InvalidAttributesException;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +33,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product save(Product product) {
+    public Product save(Product product) throws InvalidAttributesException {
+        if (isNameExists(product.getName())) {
+            throw new InvalidAttributesException();
+        }
         product.setVersion(1);
         return productRepository.save(product);
     }
@@ -40,5 +44,14 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public boolean delete(Integer id) {
         return productRepository.delete(id);
+    }
+
+    private boolean isNameExists(String name) {
+         for (Product p : this.findAll()) {
+             if (p.getName().equals(name)) {
+                 return true;
+             }
+         }
+         return false;
     }
 }

@@ -5,9 +5,11 @@ import com.globomantics.productservice.service.ProductService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.directory.InvalidAttributesException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
@@ -66,10 +68,10 @@ public class ProductController {
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         logger.info("Creating new product with name: {}, quantity: {}", product.getName(), product.getQuantity());
 
-        // Create the new product
-        Product newProduct = productService.save(product);
-
         try {
+            // Create the new product
+            Product newProduct = productService.save(product);
+
             // Build a created response
             return ResponseEntity
                     .created(new URI("/product/" + newProduct.getId()))
@@ -77,6 +79,8 @@ public class ProductController {
                     .body(newProduct);
         } catch (URISyntaxException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } catch (InvalidAttributesException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).contentType(MediaType.APPLICATION_JSON_UTF8).build();
         }
     }
 
