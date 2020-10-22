@@ -1,0 +1,16 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/release/1-0/C4_Component.puml
+LAYOUT_LEFT_RIGHT
+System_Boundary(c1, 'Tech Stack') {
+Component(controller, "Controller","SprintBoot")
+Component(service, "Service","")
+Component(repository, "Service","")
+}
+System(db, "DB","H2 Mem DB")
+System_Boundary(c2, 'Controller Test') {
+Component(junit5, "Unit Test", "")
+
+Rel(controller, service, API)
+Rel(service, repository, "")
+Rel(repository, db, "Jdbc Template")
+@enduml
